@@ -1,0 +1,2 @@
+Make the client server using python.
+and open in web window just like in dewsverse browser.

@@ -1,0 +1,7 @@
+server/__pycache__
+server/shared_data
+
+
+client/node_modules
+
+node_modules
