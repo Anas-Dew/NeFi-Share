@@ -2,7 +2,6 @@ from flask import Flask, jsonify, request, Response, render_template
 from flask_cors import CORS
 import os
 import socket
-import webbrowser
 import env_storage
 import signal
 import sys
@@ -136,7 +135,4 @@ signal.signal(signal.SIGTERM, sigterm_handler)
 if __name__ == '__main__':
     if not os.path.exists(SHARED_ROOT_DIRECTORY):
         os.makedirs(SHARED_ROOT_DIRECTORY)
-
-    webbrowser.open("http://127.0.0.1:7000", 1)
     app.run(debug=True, port=7000, host='0.0.0.0')
-    # app.run(port=7000, host='0.0.0.0')

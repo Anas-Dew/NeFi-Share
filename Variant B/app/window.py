@@ -1,20 +1,20 @@
+import env_storage
 import sys
 from PyQt5.QtCore import QUrl
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtGui import QIcon
-from PyQt5.QtNetwork import QNetworkRequest
 import socket
-
+import os
+import webbrowser
 
 class WebBrowser(QMainWindow):
     def __init__(self):
         super().__init__()
 
         # Create the main window
-        self.setWindowTitle("Web Browser")
-        self.setGeometry(100, 100, 1024, 768)
-
+        self.setWindowTitle(os.environ.get("APP_NAME"))
+        # self.setGeometry(100, 100)
+        self.setFixedSize(1024, 768)
         # Create a central widget and a layout
         central_widget = QWidget(self)
         layout = QVBoxLayout(central_widget)
@@ -34,9 +34,8 @@ class WebBrowser(QMainWindow):
         # Load an initial webpage
         self.web_view.setUrl(
             QUrl(f"http://{socket.gethostbyname(socket.gethostname())}:7000"))
-        
-        self.web_view.page().profile().downloadRequested.connect(self.download_requested)
 
+        self.web_view.page().profile().downloadRequested.connect(self.download_requested)
 
     def download_page(self):
         # Get the current page's URL
@@ -52,13 +51,16 @@ class WebBrowser(QMainWindow):
         # print("Page downloaded successfully!")
     def download_requested(self, download_item):
         # Handle download requests
-        download_item.setUrl(download_item.url())
+        # download_item.setUrl(download_item.url())
         # download_item.setDownloadOptions(options)
         download_item.accept()
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = WebBrowser()
-    window.show()
-    sys.exit(app.exec_())
+    # try:
+        app = QApplication(sys.argv)
+        window = WebBrowser()
+        window.show()
+        sys.exit(app.exec_())
+    # except:
+    #     webbrowser.open("http://127.0.0.1:7000", 1)

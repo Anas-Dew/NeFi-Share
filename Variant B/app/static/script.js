@@ -120,7 +120,7 @@ async function downloadThatFile(filename) {
         .then(blob => {
             downloadButton.style.display = 'block';
             downloadingIcon.style.display = 'none';
-            notification_component("Download Completed!")
+            notification_component("Saved in Downloads")
             saveBlobAsFile(blob, filename)
         })
         .catch(error => {
