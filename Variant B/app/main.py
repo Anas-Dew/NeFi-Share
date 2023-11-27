@@ -11,15 +11,18 @@ app = Flask(__name__, template_folder="templates")
 CORS(app, expose_headers=['File-Type'])
 SHARED_ROOT_DIRECTORY = os.path.join(
     os.getcwd(), os.environ.get('SHARED_DATA_FOLDER_NAME'))
-
+if not os.path.exists(SHARED_ROOT_DIRECTORY):
+        os.makedirs(SHARED_ROOT_DIRECTORY)
 
 @app.route('/')
 def home():
     return render_template("index.html")
 
+
 @app.errorhandler(404)
 def not_found(e):
     return render_template("404.html"), 404
+
 
 @app.route('/get_local_ip', methods=['GET'])
 def get_local_ip():
@@ -51,7 +54,8 @@ def send_file_from_directory(filename):
 
             file_extension = os.path.splitext(filename)[-1]
 
-            response = Response(file_blob, content_type='application/octet-stream')
+            response = Response(
+                file_blob, content_type='application/octet-stream')
             response.headers['Content-Disposition'] = f'attachment; filename={filename}'
             response.headers['File-Type'] = file_extension
 
@@ -91,13 +95,15 @@ def delete_file(filename):
 @app.route('/all-files', methods=['GET'])
 def list_all_files():
     try:
-        items = [item for item in os.listdir(SHARED_ROOT_DIRECTORY) if os.path.isfile(os.path.join(SHARED_ROOT_DIRECTORY, item))]
+        items = [item for item in os.listdir(SHARED_ROOT_DIRECTORY) if os.path.isfile(
+            os.path.join(SHARED_ROOT_DIRECTORY, item))]
 
         # Create a list of dictionaries with filename and size in MB
         file_info_list = [{
-                'filename': filename,
-                'size_mb': os.path.getsize(os.path.join(SHARED_ROOT_DIRECTORY, filename)) / (1024 * 1024)  # Convert to MB
-            } for filename in items]
+            'filename': filename,
+            # Convert to MB
+            'size_mb': os.path.getsize(os.path.join(SHARED_ROOT_DIRECTORY, filename)) / (1024 * 1024)
+        } for filename in items]
 
         return jsonify(file_info_list), 200
     except Exception as e:
@@ -112,8 +118,6 @@ def exit_handler():
         timeout=10
     )
     print("Thank you for using")
-
-    
 
 
 # Register the exit_handler to be called when the script is terminated
@@ -133,6 +137,4 @@ signal.signal(signal.SIGTERM, sigterm_handler)
 
 
 if __name__ == '__main__':
-    if not os.path.exists(SHARED_ROOT_DIRECTORY):
-        os.makedirs(SHARED_ROOT_DIRECTORY)
     app.run(debug=True, port=7000, host='0.0.0.0')
