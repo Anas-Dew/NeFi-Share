@@ -41,7 +41,7 @@ class WebBrowser(QMainWindow):
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    window_intent = QApplication(sys.argv)
     window = WebBrowser()
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(window_intent.exec_())

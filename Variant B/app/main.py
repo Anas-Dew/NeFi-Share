@@ -7,12 +7,17 @@ import signal
 import sys
 import atexit
 from plyer import notification
+from window import WebBrowser
+from PyQt5.QtWidgets import QApplication
+from threading import Thread
+
 app = Flask(__name__, template_folder="templates")
 CORS(app, expose_headers=['File-Type'])
 SHARED_ROOT_DIRECTORY = os.path.join(
     os.getcwd(), os.environ.get('SHARED_DATA_FOLDER_NAME'))
 if not os.path.exists(SHARED_ROOT_DIRECTORY):
-        os.makedirs(SHARED_ROOT_DIRECTORY)
+    os.makedirs(SHARED_ROOT_DIRECTORY)
+
 
 @app.route('/')
 def home():
@@ -136,5 +141,27 @@ def sigterm_handler(signum, frame):
 signal.signal(signal.SIGTERM, sigterm_handler)
 
 
+def server():
+    # app.run(debug=True, port=7000, host='0.0.0.0')
+    app.run(port=7000, host='0.0.0.0')
+
+
+def window():
+    window_intent = QApplication(sys.argv)
+    window = WebBrowser()
+    window.show()
+    sys.exit(window_intent.exec_())
+
+
+def main():
+    server_run = Thread(target=server, daemon=True)
+    window_run = Thread(target=window, daemon=True)
+
+    server_run.start()
+    window_run.start()
+    server_run.join()
+    window_run.join()
+
+
 if __name__ == '__main__':
-    app.run(debug=True, port=7000, host='0.0.0.0')
+    main()
